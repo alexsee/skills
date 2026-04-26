@@ -1,2 +1,3 @@
-# skills
-My personal directory of skills.
+# Agent Skills
+
+A collection of agent skills that extend capabilities across planning, development, and tooling.

@@ -1,0 +1,5 @@
+interface:
+  display_name: "Grill me"
+  short_description: "Grill the user relentlessly about a plan"
+policy:
+  allow_implicit_invocation: false

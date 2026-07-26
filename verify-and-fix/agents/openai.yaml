@@ -1,0 +1,5 @@
+interface:
+  display_name: "Verify and fix"
+  short_description: "Confirms a reported bug exists, fixes the root cause with a minimal diff"
+policy:
+  allow_implicit_invocation: false

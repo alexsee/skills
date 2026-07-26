@@ -5,6 +5,7 @@ description: >-
   stale commands, documents real recipes, and matches the repo's package runner
   (uv, poetry, npm). Use when updating README, auditing docs, or after migrating
   build tooling.
+disable-model-invocation: true
 ---
 
 # Sync README with justfile

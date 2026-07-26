@@ -5,6 +5,7 @@ description: >-
   runs focused tests. Use when the user says "Verify this issue exists and fix
   it", pastes a Bugbot/review finding, or describes a concrete defect to
   validate and repair.
+disable-model-invocation: true
 ---
 
 # Verify and fix

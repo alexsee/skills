@@ -1,3 +1,5 @@
 interface:
   display_name: "Frontend Design"
   short_description: "Guidance for distinctive, intentional visual design"
+policy:
+  allow_implicit_invocation: false

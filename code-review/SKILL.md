@@ -8,7 +8,7 @@ Two-axis review of the diff between `HEAD` and a fixed point the user supplies:
 - **Standards** — does the code conform to this repo's documented coding standards?
 - **Spec** — does the code faithfully implement the originating issue / PRD / spec?
 
-Both axes run as **parallel sub-agents** so they don't pollute each other's context, then this skill aggregates their findings.
+Run both axes such that they don't pollute each other's context, then this skill aggregates their findings.
 
 ## Process
 
@@ -52,19 +52,17 @@ Each smell reads *what it is* → *how to fix*; match it against the diff:
 - **Message Chains** — long `a.b().c().d()` navigation the caller shouldn't depend on. → hide the walk behind one method on the first object.
 - **Middle Man** — a class or function that mostly just delegates onward. → cut it, call the real target direct.
 - **Refused Bequest** — a subclass or implementer that ignores or overrides most of what it inherits. → drop the inheritance, use composition.
-- **Excessive Code** — the code contains unnecessary complex and excessive code when a simpler solution does the same. → simplify the code and prefer straight forward solutions.
+- **Excessive Code** — the code contains unnecessary complex and excessive code when a simpler solution does the same. → Straighten logic flows. Remove excessive parameters. Remove premature optimization. Remove extra comments that are unnecessary or inconsistent with local style. Remove casts to `any` used only to bypass type issues. Refactor deeply nested code that should be simplified with early returns.
 
-### 4. Spawn both sub-agents in parallel
+### 4. Review prompts
 
-Send a single message with two `Agent` tool calls. Use the `general-purpose` subagent for both.
-
-**Standards sub-agent prompt** — include:
+**Standards prompt** — include:
 
 - The full diff command and commit list.
 - The list of standards-source files you found in step 3, **plus the smell baseline from step 3** pasted in full — the sub-agent has no other access to it.
 - The brief: "Report — per file/hunk where relevant — (a) every place the diff violates a documented standard: cite the standard (file + the rule); and (b) any baseline smell you spot: name it and quote the hunk. Distinguish hard violations from judgement calls — documented-standard breaches can be hard, but baseline smells are always judgement calls, and a documented repo standard overrides the baseline. Skip anything tooling enforces. Under 400 words."
 
-**Spec sub-agent prompt** — include:
+**Spec prompt** — include:
 
 - The diff command and commit list.
 - The path or fetched contents of the spec.

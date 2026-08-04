@@ -8,4 +8,8 @@ Implement the work described by the user in the spec or tickets.
 
 Use TDD where possible, at pre-agreed seams.
 
+Run typechecking, and the full test suite once at the end.
+
+Once done, use /code-review to review the work.
+
 Do NOT commit your work.

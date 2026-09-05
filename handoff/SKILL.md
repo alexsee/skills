@@ -7,7 +7,7 @@ disable-model-invocation: true
 
 Write a handoff document summarising the current conversation so a fresh agent can continue the work. Save to the temporary directory of the user's OS - not the current workspace.
 
-Include a "suggested skills" section in the document, which suggests skills that the agent should invoke.
+Preserve the active objective, accepted decisions, authorization, completed work, verification results, blockers, and concrete next steps. Suggest skills only when relevant to the remaining work; label them as optional guidance, not new requirements.
 
 Do not duplicate content already captured in other artifacts (PRDs, plans, ADRs, issues, commits, diffs). Reference them by path or URL instead.
 

@@ -1,6 +1,6 @@
 ---
 name: write-pr-descriptions
-description: Draft clear, concise pull request descriptions from diffs, issue context, branch changes, or user-provided summaries. Use when Codex needs to prepare or refine a reviewer-facing PR description that explains the problem or feature, user or system impact, important context, repository-specific template requirements, and focused review callouts without narrating implementation details.
+description: Draft or refine a reviewer-facing pull request description from the diff, issue, and repository template.
 ---
 
 # Write PR Descriptions

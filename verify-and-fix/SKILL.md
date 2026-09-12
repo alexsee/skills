@@ -1,11 +1,6 @@
 ---
 name: verify-and-fix
-description: >-
-  Confirms a reported bug exists, fixes the root cause with a minimal diff, and
-  runs focused tests. Use when the user says "Verify this issue exists and fix
-  it", pastes a Bugbot/review finding, or describes a concrete defect to
-  validate and repair.
-disable-model-invocation: true
+description: Verify a concrete bug or review finding, fix its root cause with a focused diff, and run the narrowest meaningful regression check.
 ---
 
 # Verify and fix

@@ -1,7 +1,8 @@
 ---
 name: grill-with-docs
-description: A relentless interview to sharpen a plan or design, which also creates docs (ADR's and glossary) as we go.
-disable-model-invocation: true
+description: Stress-test a design while capturing settled domain terms and durable decisions in project documentation.
 ---
 
-Call the Skill tool twice, for "grilling" and "domain-modeling".
+Apply the `grilling` and `domain-modeling` skills together. Ask focused rounds of
+high-impact questions, and update domain documentation only as durable decisions
+settle. Do not turn tentative discussion into glossary entries or ADRs.

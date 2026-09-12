@@ -1,15 +1,18 @@
 ---
 name: implement
-description: "Implement a piece of work based on a spec or set of tickets."
-disable-model-invocation: true
+description: Implement an existing issue, spec, or ticket end to end. Use when the user explicitly invokes this workflow with a work item.
 ---
 
-Implement the work described by the user in the spec or tickets.
+# Implement
 
-Use TDD when requested or when a behavioral regression benefits from it. Reuse existing test interfaces and any seams already agreed in the task; choose routine test placement without another approval step.
+Read the referenced work item and relevant repository guidance, infer routine
+details from the codebase, and carry the authorized scope to a working result.
+Treat accepted conversation decisions as part of the requirements.
 
-Run the relevant build/typecheck and focused tests according to the repository guidance. Use the full suite only for broad integration risk or an explicit requirement. After appropriate checks pass, repeat or broaden them only for new changes, failures, or unresolved concerns.
+Use TDD only when requested or when a focused regression test materially
+improves confidence. Run the narrowest meaningful build and tests for the
+change, broadening only for concrete integration risk or failures.
 
-Once done, use /code-review to review the work.
-
-Do not commit unless the user has requested it. Complete the authorized implementation without stopping for routine design approvals.
+Finish implementation, verification, and any directly required generated
+artifacts. Do not add a separate review workflow or commit unless the user asks.
+Report remaining limitations plainly.

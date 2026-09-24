@@ -1,0 +1,5 @@
+interface:
+  display_name: "Audit tests"
+  short_description: "Audits all tests and removes non-needed ones."
+policy:
+  allow_implicit_invocation: true

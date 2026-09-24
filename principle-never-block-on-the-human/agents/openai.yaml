@@ -1,0 +1,5 @@
+interface:
+  display_name: "Never Block on the Human"
+  short_description: "Proceed on reversible work and let the human course-correct"
+policy:
+  allow_implicit_invocation: false

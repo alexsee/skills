@@ -1,0 +1,5 @@
+interface:
+  display_name: "Why"
+  short_description: "Explain why a design works this way, with cited evidence"
+policy:
+  allow_implicit_invocation: false

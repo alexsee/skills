@@ -1,0 +1,5 @@
+interface:
+  display_name: "Make Operations Idempotent"
+  short_description: "Converge to the same end state across retries"
+policy:
+  allow_implicit_invocation: false

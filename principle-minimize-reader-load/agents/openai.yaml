@@ -1,0 +1,5 @@
+interface:
+  display_name: "Minimize Reader Load"
+  short_description: "Collapse layers between a question and its answer"
+policy:
+  allow_implicit_invocation: false

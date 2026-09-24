@@ -1,0 +1,5 @@
+interface:
+  display_name: "Encode Lessons in Structure"
+  short_description: "Encode a recurring rule as a check instead of more text"
+policy:
+  allow_implicit_invocation: false

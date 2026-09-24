@@ -1,0 +1,5 @@
+interface:
+  display_name: "Outcome-Oriented Execution"
+  short_description: "Converge on the target architecture across phase boundaries"
+policy:
+  allow_implicit_invocation: false

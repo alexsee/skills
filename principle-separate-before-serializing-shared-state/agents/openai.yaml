@@ -1,0 +1,5 @@
+interface:
+  display_name: "Separate Before Serializing"
+  short_description: "Eliminate shared writes before adding a lock"
+policy:
+  allow_implicit_invocation: false

@@ -1,6 +1,6 @@
 ---
 name: audit-bad-patterns
-description: Scan a repository for backend, database, authentication, upload, and deployment anti-patterns and append evidence-backed findings to a Markdown audit log. Use for requested or scheduled anti-pattern audits, not ordinary feature implementation.
+description: Scan a repository for security, reliability, and maintainability anti-patterns and append evidence-backed findings to a Markdown audit log. Use for requested or scheduled anti-pattern audits, not ordinary feature implementation.
 disable-model-invocation: true
 ---
 
@@ -10,7 +10,14 @@ Audit the current repository and append a concise, actionable run summary to `do
 
 ## Scan and verify
 
-Read repository instructions and relevant component guides, then read [the pattern catalog](references/patterns.md). The catalog is the user's baseline; include other concrete anti-patterns only when supported by comparable evidence. Apply each pattern only where its technology and context exist.
+Read repository instructions and relevant component guides, then identify the languages, frameworks, providers, and deployed components from source and project/dependency files. Read only the relevant catalogs:
+
+- [Python backend patterns](references/python.md): Python services, especially FastAPI, SQLAlchemy, authentication, uploads, and deployment.
+- [Shared .NET Windows desktop patterns](references/dotnet-desktop.md): WinUI or WinForms applications and their shared libraries/services. Covers threading, DI, SQLite, scheduling, networking, privileged IPC, cryptography, updates, COM/native interop, configuration, logging, localization, and filesystem operations. Inspect only groups for components actually present.
+- [WinUI patterns](references/winui.md): WinUI 3 / Windows App SDK applications; read alongside the shared .NET catalog.
+- [WinForms patterns](references/winforms.md): Windows Forms applications; read alongside the shared .NET catalog.
+
+For mixed repositories, read each applicable catalog; for two desktop shells, read both shell catalogs and the shared catalog once. The catalogs are the user's baseline; include other concrete anti-patterns only when supported by comparable evidence. Preserve existing catalog IDs when comparing prior runs. Apply each pattern only where its technology and context exist. Package names and search terms are candidate locators, not defects. Verify installed versions, supported frameworks, configuration defaults, and advisories against primary documentation before reporting version-dependent issues; being older than the latest release alone is not a finding.
 
 Default to the whole repository's first-party source, configuration, migrations, and deployment definitions. Exclude generated code, build output, vendored dependencies, and the audit log itself. Read tests as evidence for behavior and safeguards; do not mistake deliberately vulnerable fixtures or development settings for production behavior. Respect a narrower requested scope.
 

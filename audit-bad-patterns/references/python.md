@@ -1,4 +1,4 @@
-# Anti-pattern catalog
+# Python backend anti-pattern catalog
 
 Stable IDs support comparison across runs. Entries describe evidence and context that prevents false positives. Groups: database (DB), API, authentication (AUTH), storage (FILE), deployment (OPS), observability/jobs (OBS).
 

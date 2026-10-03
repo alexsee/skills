@@ -1,0 +1,5 @@
+interface:
+  display_name: "Audit Bad Patterns"
+  short_description: "Scan anti-patterns and append verified code findings"
+policy:
+  allow_implicit_invocation: false

@@ -1,0 +1,3 @@
+interface:
+  display_name: "Explain the Number"
+  short_description: "Explain measurements and rule out misleading results"

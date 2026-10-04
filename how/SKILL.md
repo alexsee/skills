@@ -24,7 +24,7 @@ When in doubt, take the simple path.
 Decompose the question into 2 to 4 exploration angles, each a distinct slice of the subsystem. Spawn all explorers in a single message:
 
 - `subagent_type`: `generalPurpose`
-- `model`: the `how explorer` line
+- `model`: the `how explorer` role, inherited execution in T3
 - `readonly`: `true`
 
 Each explorer gets the prompt in `references/explorer-prompt.md` with its angle filled in. Then go to Step 3.

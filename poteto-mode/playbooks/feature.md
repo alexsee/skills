@@ -1,5 +1,7 @@
 ### Feature
 
+Apply [host runtime integration](../references/runtime.md) before following platform-specific commands below.
+
 **You own the design. Plan, review, verify.** Delegate implementation. Stay in the lead.
 
 1. `how` over the affected subsystem.

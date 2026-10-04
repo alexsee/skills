@@ -1,0 +1,333 @@
+# TypeScript patterns
+
+Code examples for each rule in `SKILL.md`. The underlying principles are language-agnostic. See the **type-system-discipline** and **boundary-discipline** principle skills.
+
+## Branded types
+
+Brand primitives so they can't be mixed up. Validate once at the boundary. Downstream code trusts the type.
+
+```ts
+type AgentId = string & { readonly __brand: "AgentId" };
+
+function parseAgentId(input: string): AgentId {
+  if (!isUUID(input)) throw new Error(`Invalid agent id: ${input}`);
+  return input as AgentId;
+}
+
+function focusAgent(id: AgentId): void {
+  /* input is trusted */
+}
+```
+
+Follow the repository's existing brand convention; use this shape when none exists.
+
+## Discriminated unions
+
+Model variants with a literal discriminant. Every variant shares the field name and each variant's value is unique, so impossible combos can't be represented.
+
+```ts
+// Don't. Boolean + optionals lets contradictory states exist.
+type DiffState = { loading: boolean; diff?: GitDiff; error?: string };
+
+// Do. Only valid states exist.
+type DiffState =
+  | { kind: "loading" }
+  | { kind: "ready"; diff: GitDiff }
+  | { kind: "error"; error: string };
+```
+
+Pick one discriminant name (`kind`, `type`, `tag`) and stick to it.
+
+## Constructive modeling
+
+Build the type from parts that are all legal instead of restricting a loose type with runtime checks.
+
+Non-empty, via a variadic tuple:
+
+```ts
+type NonEmpty<T> = [T, ...T[]];
+
+// Don't: T[] plus a length check every caller must repeat
+function pickWinner(entries: string[]): string {
+  if (entries.length === 0) throw new Error("no entries");
+  return entries[Math.floor(Math.random() * entries.length)];
+}
+
+// Do: an empty value of the type can't exist
+function pickWinner(entries: NonEmpty<string>): string {
+  const [first, ...rest] = entries;
+  const index = Math.floor(Math.random() * entries.length);
+  return index === 0 ? first : (rest[index - 1] ?? first);
+}
+```
+
+Where a plain `T[]` arrives, narrow once with a guard. The fact then travels in the type:
+
+```ts
+const isNonEmpty = <T>(arr: T[]): arr is NonEmpty<T> => arr.length > 0;
+```
+
+Even length, as pairs:
+
+```ts
+type Pairs<T> = [T, T][];
+```
+
+A time range, as start plus duration:
+
+```ts
+// Don't: a comment holds the invariant
+type TimeRange = { start: Date; end: Date }; // start <= end
+
+// Validate once; a plain number can still be negative or non-finite.
+type NonNegativeDurationMs = number & { readonly __brand: "NonNegativeDurationMs" };
+
+function parseDurationMs(value: number): NonNegativeDurationMs {
+  if (!Number.isFinite(value) || value < 0) throw new Error("invalid duration");
+  return value as NonNegativeDurationMs;
+}
+
+type TimeRange = { start: Date; durationMs: NonNegativeDurationMs };
+```
+
+Use the brand when callers rely on the non-negative invariant. A plain number is sufficient when that invariant is not required. Derive end from start and the validated duration rather than synchronizing two endpoints.
+
+## Simplest total type
+
+Don't strengthen everything. Keep `T[]` when every operation on it is total:
+
+```ts
+const sum = (xs: number[]) => xs.reduce((a, b) => a + b, 0); // [] is 0, fine
+```
+
+Strengthen when the loose type forces a lie at a use site. The tells are `!`, `arr[0] as T`, and a "should never happen" throw:
+
+```ts
+// Don't: partiality smuggled past the compiler
+function newestSession(sessions: Session[]): Session {
+  return sessions.at(0)!;
+}
+
+// Do: strengthen the input; the assertion disappears
+function newestSession(sessions: NonEmpty<Session>): Session {
+  return sessions[0];
+}
+```
+
+Weakening the result to `Session | undefined` is the other total signature.
+
+## `unknown` over `any`
+
+External data is always `unknown`. Narrow before use.
+
+```ts
+// Don't
+function handle(input: any) {
+  return input.foo.bar;
+}
+
+// Do
+function handle(input: unknown) {
+  if (typeof input === "object" && input !== null && "foo" in input) {
+    // narrowed; compiler verifies access
+  }
+}
+```
+
+External sources include RPC payloads, `JSON.parse`, `postMessage`, IPC, file contents, environment variables, database results.
+
+## Schemas before hand-rolled guards
+
+Before writing a property-by-property type guard for external data, look for the repository's runtime schema library and existing schemas. Let one schema own validation and derive the TypeScript type from it. Do not maintain a schema, a duplicate interface, and a guard that can drift apart.
+
+```ts
+import { z } from "zod";
+
+const UserSchema = z.object({
+  id: z.string().uuid(),
+  role: z.enum(["admin", "member"]),
+});
+
+type User = z.infer<typeof UserSchema>;
+
+function parseUser(input: unknown): User {
+  return UserSchema.parse(input);
+}
+```
+
+Use `safeParse` when failure is an expected branch. Use the equivalent inference helper when the repository uses another schema library. Do not add a new schema dependency for one guard. This rule prefers the schema system the codebase already trusts.
+
+## Checked assertions
+
+Prefer inference and validation over assertions. A schema proves external data at runtime. A narrow assertion can encode an invariant the compiler cannot express, such as the validated brand above. `as const` preserves literals without pretending external data was validated.
+
+```ts
+import { z } from "zod";
+
+// Don't
+const user = data as User;
+
+// Don't
+function isUser(data: unknown): data is User {
+  return typeof data === "object" && data !== null && "id" in data;
+}
+
+// Do
+const userSchema = z.object({ id: z.string(), name: z.string() });
+type User = z.infer<typeof userSchema>;
+
+function parseUser(data: unknown): User {
+  return userSchema.parse(data);
+}
+```
+
+When the type comes first, annotate the validator with the type it proves. The compiler then rejects a validator that proves less than the type. Remove `name` from the object below and the assignment fails to compile.
+
+```ts
+type User = { id: string; name: string };
+
+const userSchema: z.ZodType<User> = z.object({ id: z.string(), name: z.string() });
+```
+
+When refactoring an `as` out of existing code, identify why TypeScript can't infer:
+
+- Missing discriminant: add one, switch to a discriminated union.
+- Overly wide source type (e.g. `Record<string, unknown>`): narrow it.
+- Untyped boundary: parse with the schema that owns the shape. Add a schema only where none exists.
+- A compiler limitation: document the invariant and keep any necessary assertion at the owning boundary. A brand or `satisfies` does not itself prove a runtime property.
+
+## Narrowing hierarchy
+
+From best to last-resort:
+
+1. **Discriminated union switch / if.** Compiler narrows automatically.
+2. **`in` operator.** `"key" in obj` narrows to variants containing that key.
+3. **`typeof` / `instanceof`.** For primitives and class instances.
+4. **User-defined type guard.** When the above aren't enough.
+5. **`as` cast.** Only after validation.
+
+```ts
+function area(s: Shape): number {
+  if ("radius" in s) return Math.PI * s.radius ** 2; // narrowed to circle
+  return s.width * s.height; // narrowed to rect
+}
+```
+
+## Type guards
+
+A guard must actually verify the claim. A lying guard is worse than `as`.
+
+```ts
+function isCircle(s: Shape): s is Shape & { kind: "circle" } {
+  return s.kind === "circle";
+}
+```
+
+Prefer discriminant narrowing when possible.
+
+## Exhaustiveness
+
+In default arms, assign the discriminant to a `never`-typed local.
+
+```ts
+// Value-returning switch
+function area(s: Shape): number {
+  switch (s.kind) {
+    case "circle":
+      return Math.PI * s.radius ** 2;
+    case "rect":
+      return s.width * s.height;
+    default: {
+      const _exhaustive: never = s;
+      return _exhaustive;
+    }
+  }
+}
+
+// Void switch
+function handle(s: Shape): void {
+  switch (s.kind) {
+    case "circle":
+      drawCircle(s);
+      break;
+    case "rect":
+      drawRect(s);
+      break;
+    default: {
+      const _exhaustive: never = s;
+      void _exhaustive;
+    }
+  }
+}
+```
+
+Return-style in value-returning switches, void-style in statement switches.
+
+## `satisfies` over `as`
+
+`satisfies` checks assignability while retaining the expression's inferred type. Literal inference still depends on context; add `as const` when exact literals are required.
+
+```ts
+// Don't. Widens, loses literal types.
+const config = { theme: "dark", cols: 3 } as Config;
+
+// Do. Checks assignability and explicitly preserves literals.
+const config = { theme: "dark", cols: 3 } as const satisfies Config;
+// config.theme is "dark" (literal), not string
+```
+
+## Boundary validation
+
+Validate once where data crosses in. Trust types inside. See the **boundary-discipline** principle skill.
+
+- **Wire formats** (proto, JSON-RPC): follow the protocol's unknown-field policy; ignore extra fields only where forward compatibility permits it.
+- **Persisted JSON:** versioned blob with a try/catch around the parse.
+- **Don't re-validate** deep in call chains.
+
+## Schema-derived types
+
+When a `.proto`, OpenAPI spec, GraphQL schema, or database migration already defines a shape, derive from the generated types instead of duplicating them.
+
+```ts
+// Don't. Duplicate shape, drifts when the schema changes.
+type CheckSummary = {
+  totalCount: number;
+  checks: { name: string; status: string }[];
+};
+function renderChecks(s: CheckSummary) {
+  /* ... */
+}
+
+// Do. Derive from the generated schema type.
+import type { ChecksMessage } from "<generated module>";
+function renderChecks(s: Pick<ChecksMessage, "totalCount" | "checks">) {
+  /* ... */
+}
+```
+
+Reach for `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited`, `typeof` before writing a new interface.
+
+## Object args
+
+```ts
+// Existing positional API. Keep it when clear; consider options for confusing arguments.
+openFile(uri, {
+  startLineNumber: 10,
+  startColumn: 1,
+  endLineNumber: 10,
+  endColumn: 1,
+});
+
+// Do. Order-independent, self-documenting.
+openFile({
+  uri,
+  selection: {
+    startLineNumber: 10,
+    startColumn: 1,
+    endLineNumber: 10,
+    endColumn: 1,
+  },
+});
+```
+
+Skip on hot paths: per-frame render, tokenizers, parsers, anything in a tight loop where the allocation cost matters.

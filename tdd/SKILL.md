@@ -1,6 +1,6 @@
 ---
 name: tdd
-description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration tests.
+description: Test-driven development. Use when the user wants to build features or fix bugs test-first, mentions "red-green-refactor", or wants integration or regression tests. Also use for bug fixes with an obvious cheap local test path.
 ---
 
 # Test-Driven Development
@@ -8,6 +8,12 @@ description: Test-driven development. Use when the user wants to build features 
 TDD is the red → green loop. This skill is the reference that makes that loop produce tests worth keeping: what a good test is, where tests go, the anti-patterns, and the rules of the loop. Apply this guidance throughout the loop; reread references only when a decision needs them.
 
 When exploring the codebase, read `CONTEXT.md` (if it exists) so test names and interface vocabulary match the project's domain language, and respect ADRs in the area you're touching.
+
+## Choose a practical regression check
+
+Before adding or changing a test, apply the [test-audit](../test-audit/SKILL.md) authoring gate. Prefer the existing public boundary that can expose the failure.
+
+For a bug fix, do not build a broad harness, brittle mock layer, or unrelated fixtures just to force a test. If a focused test is impractical, use the closest executable regression check, such as a reproduction command, targeted script, browser automation, or focused integration run. State why no new test was added. If the user explicitly requested a failing test, explain any blocker to that deliverable.
 
 ## What a good test is
 
@@ -31,6 +37,12 @@ When the shape of that interface is itself in question (how deep the module is, 
 
 ## Rules of the loop
 
-- **Red before green.** Write the failing test first, then only enough code to pass it. Don't anticipate future tests or add speculative features.
+- **Red before green.** Write and run the failing test first. Confirm it fails for the intended behavioral reason, then write only enough code to pass it. Don't anticipate future tests or add speculative features.
 - **One slice at a time.** One seam, one test, one minimal implementation per cycle.
 - **Refactoring is not part of the loop.** It belongs to the review stage (see the `code-review` skill), not the red → green implementation cycle.
+
+## Regression guardrails and evidence
+
+Do not weaken assertions to match a wrong implementation. Keep fixtures focused and make flaky repros deterministic where possible. Broader sibling coverage needs its own credible risk under test-audit.
+
+Report the failing-before command and its observed failure, the passing-after run, and relevant nearby validation. If failing-before evidence could not be demonstrated, name the gap and the closest regression check used instead.

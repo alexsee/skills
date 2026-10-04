@@ -46,13 +46,13 @@ One `Task` call, `subagent_type: generalPurpose`, with `model` from the `reflect
 
 ### 4. Structural enforcement check
 
-Sanity-check the synthesizer's Accepted list. For any item that would be enforced more reliably by a lint rule, script, metadata flag, or runtime check, move it from Accepted to Backlog. See the **encode-lessons-in-structure** principle skill.
+Sanity-check the synthesizer's Accepted list. For mechanical failures, inspect the repo's existing check commands, hooks, and CI first. A check that exists but is unwired or broken needs repair; a missing guardrail for an observed failure is a finding. Prefer architectural or type constraints, then the cheapest suitable lint, script, metadata flag, or runtime check. Route those findings to Backlog with the concrete mechanism and evidence, using `correct` for recurring mistake classes. Reserve skill prose and coding standards for judgment calls. See the **encode-lessons-in-structure** principle skill.
 
 ### 5. Apply
 
 Before applying any Accepted edit, present the synthesizer's full Accepted/Rejected/Backlog output to the user and wait for explicit approval. The user picks which subset to apply and may redirect routings. Skill changes affect every future agent in the org. Do not auto-apply.
 
-Backlog items file to whatever devex / backlog tracker your team uses automatically. Only the Accepted list waits for approval.
+Include Backlog items in the report. File them to the team's devex tracker only when that external action is authorized; otherwise leave a reviewable draft.
 
 For each approved Accepted item, follow the Routing field exactly:
 

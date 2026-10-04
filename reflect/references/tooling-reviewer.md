@@ -27,6 +27,8 @@ Scan for:
 - Test commands, CI flags, and how to reproduce a failing run locally
 - Debugging entry points: how to capture a trace, where logs land, which RPC to hit
 - Build / package-manager / sandbox surprises that cost minutes the first time
+- Missing or broken feedback loops: inspect existing check commands, hooks, and CI before suggesting a new check; distinguish an absent guardrail from one that exists but is unwired
+- Information-access gaps: missing logs, traces, or read-only service access that prevented diagnosis; propose the smallest useful access change without assuming new permissions
 
 ## Scope to skills and tools the session actually used
 

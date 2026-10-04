@@ -10,7 +10,7 @@ Create a polished, ready-to-paste description that helps busy reviewers understa
 ## Workflow
 
 1. Gather the available context: inspect the diff, PR title, issue or task, relevant commit messages, and any user-provided notes. Use only supported facts; flag missing context instead of guessing.
-2. Identify the delivered outcome, the problem or feature it addresses, and the user-facing or system-level impact.
+2. Identify the delivered outcome, the problem or feature it addresses, and the user-facing or system-level impact. Use the project's glossary vocabulary when available, following `GLOSSARY-MAP.md` or legacy `CONTEXT-MAP.md` to the relevant `GLOSSARY.md` / `CONTEXT.md`.
 3. Look for the repository's GitHub PR template when a repository is available, including `.github/pull_request_template.md` and templates under `.github/PULL_REQUEST_TEMPLATE/`. If a template exists, preserve its required headings, checkboxes, prompts, and formatting; when multiple templates exist, use the one that best matches the change. If no template is available, use the default concise format.
 4. Check for context reviewers may need: related issues, dependencies, migrations, rollout constraints, breaking changes, or compatibility concerns.
 5. Add a review callout only when a specific area genuinely deserves careful attention, such as complex behavior, edge cases, security, data integrity, or an architectural decision.
@@ -24,6 +24,9 @@ Create a polished, ready-to-paste description that helps busy reviewers understa
 - Mention file names, functions, or implementation details only when they identify a meaningful review risk or decision.
 - Include dependencies, breaking changes, and related context when they affect review or adoption.
 - Name actual validation commands or run paths and their observed outcomes. Do not imply unrun checks passed. For performance, use one primary before/after number with units and link the run count, variation, and limiting resource.
+- For a visual or behavioral change, include available before/after evidence: screenshots, exact output, or the failing/passing regression check. Link artifacts and identify what they demonstrate; name missing evidence without inventing a baseline.
+- Use a small diagram, pseudocode, call tree, or diff sketch when it makes the change easier to review than prose. Keep only the relationships needed to explain the result; a simple PR may need no visual.
+- For changes with material merge risk, state whether rollback is straightforward or requires recovery or migration, and identify the affected callers, data, or user flows. Explain irreversible effects and concrete mitigations rather than adding a generic risk label to every PR.
 - State exclusions only when they clarify a meaningful boundary or follow-up.
 - When publishing or editing a PR in T3, use the built-in PR mutation tool if provided and register the full URL with `link_pull_request`. Check `list_thread_pull_requests` before finishing PR work. Drafting text alone does not authorize publishing it.
 - Omit line-by-line summaries, obvious refactors, generic file lists, design-pattern explanations, and unsupported claims.

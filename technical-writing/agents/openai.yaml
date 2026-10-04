@@ -1,0 +1,5 @@
+interface:
+  display_name: "Technical Writing"
+  short_description: "Write and review docs in a layered technical style"
+policy:
+  allow_implicit_invocation: false

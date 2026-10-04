@@ -1,0 +1,5 @@
+interface:
+  display_name: "Sequence Verifiable Units"
+  short_description: "Break work into small units that each end verifiable"
+policy:
+  allow_implicit_invocation: false

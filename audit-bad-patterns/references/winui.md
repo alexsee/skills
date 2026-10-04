@@ -1,0 +1,27 @@
+# WinUI anti-pattern catalog
+
+Read for WinUI 3 / Windows App SDK applications alongside [shared .NET desktop patterns](dotnet-desktop.md). Stable `WINUI` IDs cover shell-specific behavior. Shared DI, threading, IPC, previews, and updater trust belong in the shared catalog; avoid reporting the same cause twice.
+
+Candidates: `.csproj` Windows App SDK settings, `AppInstance`, activation handlers, `DispatcherQueue`, `NavigationCacheMode`, `App.Current`, `AddSingleton`, `[ObservableProperty]`, `[RelayCommand]`, `AsyncRelayCommand`.
+
+## Activation and application lifetime
+
+- **WINUI01 — Required single ownership is assumed rather than enforced.** Trace multiple app instances accessing shared state, scheduling, tray state, or updating concurrently. Inspect early instance registration/activation redirection before windows and side-effecting services start, or equivalent cross-process coordination. Multi-instance operation is supported and legitimate when state ownership is safe; lack of single-instance code alone is not a defect.
+- **WINUI02 — Desktop shutdown is modeled as UWP suspension.** Trace close/tray/last-window behavior, host shutdown, persistence, and any relied-upon suspension callbacks. Use explicit desktop lifetime ownership with bounded cleanup and crash-safe state. Do not assume window close necessarily exits the process or that every app needs background execution.
+- **WINUI03 — Cached pages or singleton ViewModels retain stale windows/state.** Inspect `NavigationCacheMode`, event subscriptions, view/window references, scopes, and resource disposal across navigation/multiple windows. Report actual retention or cross-window state leakage; intentional page caching is valid with correct lifecycle handling. Relate shared captive-dependency findings to NET-ARCH04.
+
+## Binding, commands, and presentation
+
+- **WINUI04 — Async command semantics are discarded.** Trace `[RelayCommand] async void` or equivalent commands that lose Task completion/error/cancellation tracking. Prefer Task-returning async commands with observed failures and an appropriate token. An event handler is a different framework contract; absence of a token is a finding only when cancellation/lifetime requirements are violated.
+- **WINUI05 — Command concurrency conflicts with operation state.** Inspect `AllowConcurrentExecutions`, running/cancel state, and shared destinations or update/restore actions. Show overlap bypassing required guards; independent parallel operations may be intentional. Combine with NET-ASYNC05 when both describe one root cause.
+- **WINUI06 — Binding notification paths conflict.** Trace generated `[ObservableProperty]` members alongside manual backing properties/notifications, dependent properties, and command invalidation. Report duplicate updates, stale binding, or inconsistent validation; custom notification hooks and deliberate manual properties are legitimate.
+- **WINUI07 — ViewModels depend on concrete window lifecycles.** Trace commands opening dialogs/navigating through concrete window/page references, static `App.Current` service access, or domain DTOs mutated as presentation state. Report cross-window bugs, retained views, or domain/persistence coupling; use appropriate presentation boundaries. Dialog/navigation services and simple immutable DTO display can be valid.
+- **WINUI08 — Dispatcher assumptions fail during background work or close.** Inspect `DispatcherQueue.TryEnqueue` results, dispatch to the owning window/thread, and work executing after closure. Trace stale state, lost required updates, or wrong-thread access; handle dispatch rejection and owner lifetime. Do not assume all windows necessarily share one dispatcher. Use NET-ASYNC03 for the underlying cross-thread violation when appropriate.
+
+## Packaging and deployment
+
+- **WINUI09 — Build tooling is mistaken for runtime package identity.** Inspect actual distribution mode, manifest/package registration, `WindowsPackageType`, and identity-dependent APIs/update facilities. `EnableMsixTooling` alone does not establish identity. Report a reachable API or update path relying on unavailable identity; unpackaged deployment itself is supported.
+- **WINUI10 — Runtime prerequisites are missing from distributed artifacts.** Inspect Windows App SDK and .NET deployment choices separately, architecture/native assets, bootstrap/runtime initialization where applicable, installer prerequisites, and clean-machine evidence. One runtime's self-contained setting does not automatically bundle the other. Report an evidenced launch/deployment failure or missing required prerequisite, not absence of a preferred packaging model.
+- **WINUI11 — Shell integrations assume another framework's contract.** For updaters, preview hosts, tray/dialog libraries, or lifecycle adapters, verify installed-version WinUI support and actual window/thread/message-loop integration. Show failed behavior or a documented unsupported dependency needing validation. Package reference compatibility alone does not prove runtime UI compatibility; lack of official support alone does not prove compromise. Updater authentication/elevation remains NET-UPD01/02.
+
+For deployment checks, consult Microsoft's [Windows App SDK self-contained deployment guide](https://learn.microsoft.com/en-us/windows/apps/package-and-deploy/self-contained-deploy/deploy-self-contained-apps) for the installed SDK; .NET deployment settings must also be checked.

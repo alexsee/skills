@@ -16,7 +16,7 @@ Prefer native subagent tools for same-provider work only when they support the c
 
 Give every task a standalone brief with scope, file pointers, verification, and output paths. Fresh correction rounds include the original brief, later directives, prior findings, responses, unresolved objections, and the prior branch and head SHA. Read-only work is a scope constraint in the brief; do not assume Cursor's `readonly` flag exists or that native tool fields apply to T3.
 
-`delegate_task` inherits the caller's project, branch, and worktree. Asking it to `cd` or create a worktree does not change that binding. Use disjoint writable outputs in the shared checkout. When isolated binding is required, use an available native isolated execution facility or serialize the writes. Creating a top-level T3 thread requires the user's explicit request for separate conversations.
+`delegate_task` shares the caller's checkout by default. For a separate checkout, pass `isolation: "worktree"`; it starts at the parent local commit, runs project setup, and does not copy uncommitted edits. Asking a shared child to `cd` or create a worktree does not change its binding. Use disjoint writable outputs or serialize overlapping writes when sharing a checkout. Creating a top-level T3 thread requires the user's explicit request for separate conversations.
 
 For each T3 review round, call `delegate_task` again. Do not resume the backing `childThreadId` through thread messaging. Existing live checkout or process state can justify native agent reuse where supported, but cannot override T3's fresh delegated-review requirement.
 

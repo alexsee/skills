@@ -18,12 +18,6 @@ your fixes separately. Honor an explicitly requested in-place or stacked
 continuation instead. Do not overwrite unrelated work or change the original
 PR without authorization.
 
-Preserve Git authorship and existing co-author trailers. Credit the original
-contributors in the PR description and link the original PR when there is one.
-If the work will be squashed, preserve human author/co-author credit in the
-merge commit too, using verified identities rather than guessed emails. Model
-attribution is not a substitute for contributor credit.
-
 Rework what is necessary to finish the same goal, not
 unrelated features. Simplify the implementation without dropping intended
 behavior or surfaces. Recheck the source PR too: it may have improved while

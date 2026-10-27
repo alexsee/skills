@@ -24,8 +24,7 @@ If the work will be squashed, preserve human author/co-author credit in the
 merge commit too, using verified identities rather than guessed emails. Model
 attribution is not a substitute for contributor credit.
 
-Use `modernize` to update the continuation against its intended base and
-current architecture. Rework what is necessary to finish the same goal, not
+Rework what is necessary to finish the same goal, not
 unrelated features. Simplify the implementation without dropping intended
 behavior or surfaces. Recheck the source PR too: it may have improved while
 you were working.
@@ -34,9 +33,8 @@ Independently verify the original failure and realistic workflows, following
 repository guidance and permissions. Green mocked tests do not prove the user
 experience works. State what remains unverified.
 
-When the requested finish includes a PR, use `write-pr-descriptions` to file or update it,
-then `babysit-pr` rather than stopping at creation. Use `leaving-pr-comments`
-for replies. Merge or close the original PR only when authorized.
+When the requested finish includes a PR, use `write-pr-descriptions` to file or update it.
+Use `leaving-pr-comments` for replies. Do not merge or close the original PR.
 
 Report what you inherited, what you changed, how you verified it, how credit
 was preserved, and any remaining decision.

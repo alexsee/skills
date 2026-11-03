@@ -1,9 +1,12 @@
 ---
 name: test-audit
-description: "Invoke whenever writing, changing, reviewing, or sweeping tests. Authoring gate for new tests plus audit workflow for low-value, implementation-coupled, or duplicative tests and the test-only production seams they demand."
+description: "Use only when the user explicitly requests test-audit. Authoring gate for new tests plus audit workflow for low-value, implementation-coupled, or duplicative tests and the test-only production seams they demand."
 ---
 
 # Test Audit
+
+Apply this skill only when the user explicitly invokes `$test-audit` or asks to
+use test-audit. Writing, changing, or reviewing tests alone does not activate it.
 
 Three modes, one value bar. Authoring mode gates every new or changed test at
 write time. Audit mode runs focused sweeps of tests that re-assert source,

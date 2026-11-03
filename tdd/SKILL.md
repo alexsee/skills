@@ -11,7 +11,7 @@ When exploring the codebase, read the relevant `GLOSSARY.md` (follow `GLOSSARY-M
 
 ## Choose a practical regression check
 
-Before adding or changing a test, apply the [test-audit](../test-audit/SKILL.md) authoring gate. Prefer the existing public boundary that can expose the failure.
+Prefer the existing public boundary that can expose the failure. Apply the [test-audit](../test-audit/SKILL.md) authoring gate only when the user explicitly requests that skill.
 
 For a bug fix, do not build a broad harness, brittle mock layer, or unrelated fixtures just to force a test. If a focused test is impractical, use the closest executable regression check, such as a reproduction command, targeted script, browser automation, or focused integration run. State why no new test was added. If the user explicitly requested a failing test, explain any blocker to that deliverable.
 
@@ -43,6 +43,6 @@ When the shape of that interface is itself in question (how deep the module is, 
 
 ## Regression guardrails and evidence
 
-Do not weaken assertions to match a wrong implementation. Keep fixtures focused and make flaky repros deterministic where possible. Broader sibling coverage needs its own credible risk under test-audit.
+Do not weaken assertions to match a wrong implementation. Keep fixtures focused and make flaky repros deterministic where possible. Broader sibling coverage needs its own credible risk.
 
 Report the failing-before command and its observed failure, the passing-after run, and relevant nearby validation. If failing-before evidence could not be demonstrated, name the gap and the closest regression check used instead.

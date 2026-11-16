@@ -25,12 +25,10 @@ Scan for:
 - Test commands, CI flags, and how to reproduce a failing run locally
 - Debugging entry points: how to capture a trace, where logs land, which RPC to hit
 - Build / package-manager / sandbox surprises that cost minutes the first time
-- Missing or broken feedback loops: inspect existing check commands, hooks, and CI before suggesting a new check; distinguish an absent guardrail from one that exists but is unwired
-- Information-access gaps: missing logs, traces, or read-only service access that prevented diagnosis; propose the smallest useful access change without assuming new permissions
 
 ## Scope to skills and tools the session actually used
 
-Route findings only to skills, tools, or MCPs this transcript used. A skill counts as used when the transcript shows a `Read` of its `SKILL.md` (under `.cursor/skills/`, `~/.cursor/skills/`, or `~/.cursor/plugins/`), a `Task` prompt naming its path, or a tool call (Shell, Grep, MCP, etc.) matching its documented commands. Speculative routings to skills the parent never opened do not count.
+Route findings only to skills, tools, or MCPs this transcript used. A skill counts as used when the transcript shows a `Read` of its `SKILL.md` (under `.agents/skills/`, `~/.agents/skills/`, or an explicitly supplied plugin skill path), a child-agent brief naming its path, or a tool call (Shell, Grep, MCP, etc.) matching its documented commands. Speculative routings to skills the parent never opened do not count.
 
 Two finding shapes are valid:
 - The parent invoked the skill and you found a real gap in its body. Route to the skill's relevant section.

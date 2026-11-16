@@ -1,5 +1,7 @@
 ### Eval
 
+Apply [host runtime integration](../references/runtime.md) before delegating, scheduling, controlling an app, or managing PRs.
+
 **You own the experiment design. Plan, blind, run, synthesize.**
 
 **Non-negotiables for blinding:**

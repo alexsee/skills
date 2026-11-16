@@ -50,10 +50,10 @@ Close.
 Recorded.
 `;
 
-const runPlan = (example: string, expectedExit: number) => {
+const runPlan = (example: string, expectedExit: number, plan = validPlan) => {
 	const directory = mkdtempSync(join(tmpdir(), "check-plan-test-"));
 	const file = join(directory, "plan.md");
-	writeFileSync(file, validPlan + example);
+	writeFileSync(file, plan + example);
 	try {
 		const result = spawnSync("node", [checker, file], { encoding: "utf8" });
 		expect(result.status).toBe(expectedExit);
@@ -93,4 +93,28 @@ test("rejects headings and prose outside a proper close", () => {
 test("rejects backtick info strings containing a backtick", () => {
 	const result = runPlan("```markdown `invalid`\n## Example only\n```\n", 1);
 	expect(result.stderr).toContain('"## Example only" after Close the program is not an appendix');
+});
+
+test("ignores prose punctuation inside matching multi-backtick code spans", () => {
+	for (const count of [2, 3, 4]) {
+		const delimiter = "`".repeat(count);
+		runPlan(`Use ${delimiter}echo \`x\`: “quoted” — example${delimiter}.\n`, 0);
+	}
+});
+
+test("checks prose following a multi-backtick span and unmatched delimiters", () => {
+	const outside = runPlan("Use ``echo `x`: y``. Bad: prose.\n", 1);
+	expect(outside.stderr).toContain("mid-sentence colon");
+	const unmatched = runPlan("Use ``unclosed: bad` here.\n", 1);
+	expect(unmatched.stderr).toContain("mid-sentence colon");
+});
+
+
+test("accepts T3 scheduling and installed skill sources", () => {
+	const plan = validPlan
+		.replace("git show origin/main:", "installed skill sources")
+		.replace("/loop 1h", "`schedule_task everyMs: 3600000`");
+	runPlan("", 0, plan);
+	const result = runPlan("", 1, plan.replace("`schedule_task everyMs: 3600000`", "no schedule"));
+	expect(result.stderr).toContain("Program checklist lacks");
 });

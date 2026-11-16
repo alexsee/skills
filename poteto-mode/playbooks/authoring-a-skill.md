@@ -1,8 +1,10 @@
 ### Authoring or modifying a skill
 
+Apply [host runtime integration](../references/runtime.md) before delegating, scheduling, controlling an app, or managing PRs.
+
 **You own the skill's voice.**
 
-1. Use the **create-skill** skill (Cursor's built-in for authoring SKILL.md files).
+1. Use the installed **skill-creator** skill for authoring SKILL.md files.
 2. Validate the skill: frontmatter has `name` and `description`, referenced files exist, cross-skill links resolve.
 3. Test cases if structural. Skip if subjective.
 4. Run **Opening a PR**.

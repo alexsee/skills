@@ -1,3 +1,0 @@
-interface:
-  display_name: "Setup pstack"
-  short_description: "Set pstack's model per role and reasoning budget"

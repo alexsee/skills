@@ -23,7 +23,7 @@ function focusAgent(id: AgentId): void {
 }
 ```
 
-Follow the repository's existing brand convention; use this shape when none exists.
+Match the `readonly __brand: 'X'` shape. Don't invent a new convention.
 
 ## Discriminated unions
 
@@ -59,9 +59,7 @@ function pickWinner(entries: string[]): string {
 
 // Do: an empty value of the type can't exist
 function pickWinner(entries: NonEmpty<string>): string {
-  const [first, ...rest] = entries;
-  const index = Math.floor(Math.random() * entries.length);
-  return index === 0 ? first : (rest[index - 1] ?? first);
+  return entries[Math.floor(Math.random() * entries.length)];
 }
 ```
 
@@ -83,18 +81,11 @@ A time range, as start plus duration:
 // Don't: a comment holds the invariant
 type TimeRange = { start: Date; end: Date }; // start <= end
 
-// Validate once; a plain number can still be negative or non-finite.
-type NonNegativeDurationMs = number & { readonly __brand: "NonNegativeDurationMs" };
-
-function parseDurationMs(value: number): NonNegativeDurationMs {
-  if (!Number.isFinite(value) || value < 0) throw new Error("invalid duration");
-  return value as NonNegativeDurationMs;
-}
-
-type TimeRange = { start: Date; durationMs: NonNegativeDurationMs };
+// Do: a negative range can't be written; derive end when needed
+type TimeRange = { start: Date; durationMs: number };
 ```
 
-Use the brand when callers rely on the non-negative invariant. A plain number is sufficient when that invariant is not required. Derive end from start and the validated duration rather than synchronizing two endpoints.
+Keep `durationMs` a plain number. Brand it (per Branded types) only if a raw number could be passed where a duration is expected, not by reflex. Pick the representation that makes the bad state unconstructable, then expose the reading you need on top (`pairs.flat()`, a `rangeEnd()` helper).
 
 ## Simplest total type
 
@@ -161,9 +152,9 @@ function parseUser(input: unknown): User {
 
 Use `safeParse` when failure is an expected branch. Use the equivalent inference helper when the repository uses another schema library. Do not add a new schema dependency for one guard. This rule prefers the schema system the codebase already trusts.
 
-## Checked assertions
+## No `as` casts
 
-Prefer inference and validation over assertions. A schema proves external data at runtime. A narrow assertion can encode an invariant the compiler cannot express, such as the validated brand above. `as const` preserves literals without pretending external data was validated.
+Every `as` is a potential runtime crash. Cast only after the type system has verified the claim.
 
 ```ts
 import { z } from "zod";
@@ -198,7 +189,7 @@ When refactoring an `as` out of existing code, identify why TypeScript can't inf
 - Missing discriminant: add one, switch to a discriminated union.
 - Overly wide source type (e.g. `Record<string, unknown>`): narrow it.
 - Untyped boundary: parse with the schema that owns the shape. Add a schema only where none exists.
-- A compiler limitation: document the invariant and keep any necessary assertion at the owning boundary. A brand or `satisfies` does not itself prove a runtime property.
+- Genuinely inexpressible: use a branded type or `satisfies`.
 
 ## Narrowing hierarchy
 
@@ -269,14 +260,14 @@ Return-style in value-returning switches, void-style in statement switches.
 
 ## `satisfies` over `as`
 
-`satisfies` checks assignability while retaining the expression's inferred type. Literal inference still depends on context; add `as const` when exact literals are required.
+`satisfies` validates without widening literal types.
 
 ```ts
 // Don't. Widens, loses literal types.
 const config = { theme: "dark", cols: 3 } as Config;
 
-// Do. Checks assignability and explicitly preserves literals.
-const config = { theme: "dark", cols: 3 } as const satisfies Config;
+// Do. Validates AND preserves literal types.
+const config = { theme: "dark", cols: 3 } satisfies Config;
 // config.theme is "dark" (literal), not string
 ```
 
@@ -284,7 +275,7 @@ const config = { theme: "dark", cols: 3 } as const satisfies Config;
 
 Validate once where data crosses in. Trust types inside. See the **boundary-discipline** principle skill.
 
-- **Wire formats** (proto, JSON-RPC): follow the protocol's unknown-field policy; ignore extra fields only where forward compatibility permits it.
+- **Wire formats** (proto, JSON-RPC): parse with `ignoreUnknownFields` so forward-compatible changes don't break old clients.
 - **Persisted JSON:** versioned blob with a try/catch around the parse.
 - **Don't re-validate** deep in call chains.
 
@@ -314,7 +305,7 @@ Reach for `Pick`, `Omit`, `Parameters`, `ReturnType`, `Awaited`, `typeof` before
 ## Object args
 
 ```ts
-// Existing positional API. Keep it when clear; consider options for confusing arguments.
+// Don't. Swap two args, still compiles.
 openFile(uri, {
   startLineNumber: 10,
   startColumn: 1,

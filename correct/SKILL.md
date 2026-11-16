@@ -1,6 +1,7 @@
 ---
 name: correct
-description: "Find the mistakes agents keep repeating in this repo and make each one impossible. Try architecture first, then types, then a lint whose error names the fix, then a test, and write docs last. Prove each check fails on a real past mistake. Use for /correct or requests to prevent recurring agent mistakes."
+description: "Find the mistakes agents keep repeating in this repo and make each one impossible. Try architecture first, then types, then a lint whose error names the fix, then a test, and write docs last. Prove each check fails on a real past mistake. Repeat this each time the operator corrects you. Use for /correct."
+disable-model-invocation: true
 ---
 
 # Correct
@@ -22,10 +23,10 @@ First, read recent commits, reverts, review comments, agent instruction files, a
 
 ## Fix and prove
 
-Fix the most frequent classes within the authorized scope, one verifiable unit each. Commit only when requested or allowed by the project workflow. Prove each new check fails on a real past mistake. Run the same command locally and in CI. Use the repository's exception mechanism, with a reason and review or expiry where its policy requires them.
+Then fix the most frequent classes now, one commit each. Prove each new check fails on a real past mistake. Run the same command locally and in CI. Exceptions go on the offending line with a reason, an expiry date, and a human's approval.
 
 ## Keep the rule table
 
-Last, keep a table in the agent instruction file that pairs each rule with what enforces it. For a correction within the requested scope, fix the mistake and update the table when it reveals a recurring class. Report structural follow-ups outside that scope without expanding the task. If the rule was already there and nothing enforces it, that's a repeat, so fix it at the highest level in the same change. Drop a rule once its mistake can't happen.
+Last, keep a table in the agent instruction file that pairs each rule with what enforces it. When the operator corrects you, fix the mistake and add the rule. If the rule was already there and nothing enforces it, that's a repeat, so fix it at the highest level in the same change. Drop a rule once its mistake can't happen.
 
 **Reply:** each class with its evidence, the level you picked, and why a higher level didn't work.

@@ -1,5 +1,7 @@
 ### Trace forensics
 
+Apply [host runtime integration](../references/runtime.md) before delegating, scheduling, controlling an app, or managing PRs.
+
 **You own the diagnosis from the artifact.**
 
 Distinct from **Runtime forensics**, which instruments the live process. Here the capture already exists. The artifact is a fixed dataset, read it, don't re-run it. Keep tooling generic: a DevTools or trace parser for cpuprofile and `.json.gz`, a text editor for a spindump, your heap tooling for a heapsnapshot.

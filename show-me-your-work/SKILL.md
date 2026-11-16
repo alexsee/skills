@@ -6,6 +6,10 @@ disable-model-invocation: true
 
 # Show me your work
 
+Apply [host runtime integration](../poteto-mode/references/runtime.md) for delegation, history, app control, scheduling, and PR operations.
+
+Use the current host's in-scope thread records or explicitly supplied transcript paths. In T3, read a referenced thread with `t3_thread_read` and cite its returned link. Never invent an `agent-transcripts/` path; report missing transcript access as a gap.
+
 Keep one canonical log.
 
 ## The format
@@ -54,7 +58,7 @@ Commit it only when the work is ambitious enough that a reviewer needs the trail
 
 ## Audit the log against the transcript
 
-At the end of the run, before handing back, check the log told the truth. Read this run's transcript under the active workspace's `agent-transcripts/` directory (the system prompt names the path). Don't glob across `~/.cursor/projects/*/`. That reads unrelated private chats. Walk this run's rows against what actually happened. Each stretch of them begins at one of this run's `start` rows, or at the first row if this run created the log, and ends at the next `start` row of another run:
+At the end of the run, before handing back, check the log told the truth. Read this run's in-scope T3 thread record or explicit host-provided transcript file. Don't glob across `~/.cursor/projects/*/`. That reads unrelated private chats. Walk this run's rows against what actually happened. Each stretch of them begins at one of this run's `start` rows, or at the first row if this run created the log, and ends at the next `start` row of another run:
 
 - Check that every row maps to a real decision or action.
 - Check that each row's evidence resolves and shows what the row claims.

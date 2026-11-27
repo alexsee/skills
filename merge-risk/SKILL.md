@@ -1,6 +1,6 @@
 ---
 name: "merge-risk"
-description: "Use when assessing the risk of merging a PR"
+description: "Use only when the user explicitly invokes $merge-risk to assess the risk of merging a PR."
 metadata:
   credits:
     skill: pr

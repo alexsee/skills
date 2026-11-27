@@ -1,6 +1,7 @@
 ---
 name: "merge-risk"
 description: "Use only when the user explicitly invokes $merge-risk to assess the risk of merging a PR."
+disable-model-invocation: true
 metadata:
   credits:
     skill: pr
